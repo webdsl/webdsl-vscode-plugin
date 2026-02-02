@@ -1,0 +1,47 @@
+{
+  "name": "webdslvscodeplugin",
+  "displayName": "WebDSLVSCodePlugin",
+  "description": "WebDSL support in VS Code.",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.100.0"
+  },
+  "activationEvents": [
+		"onLanguage:webdsl"
+	],
+  "main": "./out/extension",
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "webdsl",
+        "aliases": [
+          "WebDSL",
+          "webdsl"
+        ],
+        "extensions": [
+          ".app"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "webdsl",
+        "scopeName": "source.webdsl",
+        "path": "./syntaxes/webdsl.tmLanguage.json"
+      }
+    ]
+  },
+  "dependencies": {
+    "glob": "^11.0.0",
+    "typescript": "^5.9.3",
+    "vscode-languageclient": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.2",
+    "@types/vscode": "^1.100.0"
+  }
+}
