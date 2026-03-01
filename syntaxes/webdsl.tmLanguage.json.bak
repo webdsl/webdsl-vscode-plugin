@@ -13,7 +13,7 @@
 		"keywords": {
 			"patterns": [{
 				"name": "keyword.control.webdsl",
-				"match": "\\b\\b"
+				"match": "\\b(if|else|while|for|in|return|application|page|(email |ajax )?template|function|section|entity|extend|search|var|imports|access control rules|rule|module|from|as|where|limit|(left |right )?join|and|or|group by|order by|asc|desc|action|submit|principal is|with credentials|select|override)\\b"
 			}]
 		},
 		"strings": {
