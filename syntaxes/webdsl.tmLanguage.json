@@ -3,19 +3,13 @@
 	"name": "WebDSL",
 	"patterns": [
 		{
-			"include": "#keywords"
+			"include": "#strings"
 		},
 		{
-			"include": "#strings"
+			"include": "#comments"
 		}
 	],
 	"repository": {
-		"keywords": {
-			"patterns": [{
-				"name": "keyword.control.webdsl",
-				"match": "\\b\\b"
-			}]
-		},
 		"strings": {
 			"name": "string.quoted.double.webdsl",
 			"begin": "\"",
@@ -24,6 +18,20 @@
 				{
 					"name": "constant.character.escape.webdsl",
 					"match": "\\\\."
+				}
+			]
+		},
+		"comments": {
+			"patterns": [
+				{
+					"begin": "//",
+					"end": "$",
+					"name": "comment.line.double-slash"
+				},
+				{
+					"begin": "/\\*",
+					"end": "\\*/",
+					"name": "comment.block"
 				}
 			]
 		}

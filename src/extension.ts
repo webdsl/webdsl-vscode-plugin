@@ -10,28 +10,34 @@ let client: LanguageClient;
 let serverProcess: ChildProcess;
 
 export async function activate(context: vscode.ExtensionContext) {
-    // https://github.com/microsoft/vscode-languageserver-node/issues/662
-    // ???
-    console.log('Activating WebDSL extension!!!');
-    // serverProcess = exec("java -jar /home/ksaweryr/uni/weblab/LspSandbox/app/build/libs/webdsl-lsp-1.0.0.jar");
-    // const rl = readline.createInterface({ input: serverProcess.stdout! });
-    // const line: string = await new Promise((resolve, reject) => {
-    //     rl.once('line', resolve);
-    // });
-    // console.log(`Received line: ${line}`);
-    // const port = parseInt(line.match(/port (\d+)!/)![1]);
-    const port = 1337;
-    let serverOptions = () => {
-        console.log('WebDSL extension connecting!');
-        let socket = net.connect({ port, host: "0" });
-        let result: StreamInfo = {
+    const serverJar = context.asAbsolutePath(path.join('resources', 'webdsl-lsp-1.0.0.jar'));
+    console.log(`Path to WebDSL LSP server jar: ${serverJar}`);
+    serverProcess = exec(`java -Xss8m -jar ${serverJar}`);
+    console.log(`LSP server started as a process with PID ${serverProcess.pid}`);
+    
+    const rl = readline.createInterface({ input: serverProcess.stdout! });
+    const line: string = await new Promise((resolve, reject) => {
+        rl.once('line', resolve);
+    });
+    rl.close();
+    
+    const rle = readline.createInterface({ input: serverProcess.stderr! });
+    rle.on('line', line => {
+        console.log(`[Server Error] ${line}`);
+    });
+    
+    const port = parseInt(line.match(/port (\d+)!/)![1]);
+
+    const serverOptions = () => {
+        const socket = net.connect({ port, host: "0" });
+        const result: StreamInfo = {
             writer: socket,
             reader: socket
         };
         return Promise.resolve(result);
     };
 
-    let clinetOptions: LanguageClientOptions = {
+    const clientOptions: LanguageClientOptions = {
         documentSelector: [{ scheme: 'file', language: 'webdsl' }],
         synchronize: {
             fileEvents: vscode.workspace.createFileSystemWatcher('**/*.*')
@@ -41,14 +47,14 @@ export async function activate(context: vscode.ExtensionContext) {
     client = new LanguageClient(
         'webdslLanguageClient',
         serverOptions,
-        clinetOptions
+        clientOptions
     );
 
     client.start();
 }
 
-export function deactivate() {
-    const result = client ? client.stop() : undefined;
+export async function deactivate() {
+    const result = client ? await client.stop() : undefined;
 
     if (serverProcess) {
         serverProcess.kill();
